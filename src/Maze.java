@@ -147,6 +147,19 @@ public class Maze {
      */
     public boolean isValidCell(int row, int col) {
         // TODO: Complete this function
+        if(row < 0 || row >= this.numRows || col < 0 || col >= this.numCols)
+        {
+            return false;
+        }
+        MazeCell validCell = this.mazeGrid[row][col];
+        if(validCell.isWall())
+        {
+            return false;
+        }
+        if(validCell.isExplored())
+        {
+            return false;
+        }
         return true;
     }
 }

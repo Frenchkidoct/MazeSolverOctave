@@ -5,6 +5,9 @@
  */
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 
 public class MazeSolver {
     private Maze maze;
@@ -28,8 +31,26 @@ public class MazeSolver {
      */
     public ArrayList<MazeCell> getSolution() {
         // TODO: Get the solution from the maze
+        Stack<MazeCell> s = new Stack<MazeCell>();
+        MazeCell finish = maze.getEndCell();
+        MazeCell start = maze.getStartCell();
+        s.add(finish);
+        MazeCell position = finish.getParent();
+        while(position != null && position != start)
+        {
+            s.push(position);
+            position = position.getParent();
+        }
+        s.push(start);
+        ArrayList<MazeCell> solution = new ArrayList<MazeCell>();
+        while(!s.empty())
+        {
+            solution.add(s.pop());
+        }
+        return solution;
+
+        //start at the end and go back to beggining because one parent
         // Should be from start to end cells
-        return null;
     }
 
     /**
@@ -38,8 +59,51 @@ public class MazeSolver {
      */
     public ArrayList<MazeCell> solveMazeDFS() {
         // TODO: Use DFS to solve the maze
+
+        //create the stack
+        Stack<MazeCell> visit =  new Stack<MazeCell>();
+
+        MazeCell position = maze.getStartCell();
+        visit.push(position);
+
+        while(!visit.isEmpty())
+        {
+            position.setExplored(true);
+            position = visit.pop();
+
+            if(position == maze.getEndCell())
+            {
+                return getSolution();
+            }
+            int x = position.getRow();
+            int y = position.getCol();
+            MazeCell child;
+
+            if(maze.isValidCell(x -1, y))
+            {
+                child = maze.getCell(x-1, y);
+                child.setParent(position);
+                position.setExplored(true);
+                visit.push(child);
+            }
+            if(maze.isValidCell(x, y + 1))
+            {
+                child = maze.getCell(x, y +1);
+                child.setParent(position);
+                position.setExplored(true);
+                visit.push(child);
+            }
+            if(maze.isValidCell(x, y-1))
+            {
+                child = maze.getCell(x, y -1);
+                child.setParent(position);
+                position.setExplored(true);
+                visit.push(child);
+            }
+
+        }
         // Explore the cells in the order: NORTH, EAST, SOUTH, WEST
-        return null;
+        return getSolution();
     }
 
     /**
@@ -49,7 +113,56 @@ public class MazeSolver {
     public ArrayList<MazeCell> solveMazeBFS() {
         // TODO: Use BFS to solve the maze
         // Explore the cells in the order: NORTH, EAST, SOUTH, WEST
-        return null;
+
+        //create a queue
+        Queue<MazeCell> visit = new LinkedList<>();
+
+        MazeCell position = maze.getStartCell();
+        visit.add(position);
+        while(!visit.isEmpty())
+        {
+            position.setExplored(true);
+            position = visit.remove();
+
+            if(position == maze.getEndCell())
+            {
+                return getSolution();
+            }
+            int x = position.getRow();
+            int y = position.getCol();
+            MazeCell child;
+
+            if(maze.isValidCell(x - 1, y))
+            {
+                child = maze.getCell(x-1, y);
+                child.setParent(position);
+                position.setExplored(true);
+                visit.add(child);
+            }
+            if(maze.isValidCell(x, y +1))
+            {
+                child = maze.getCell(x, y + 1);
+                child.setParent(position);
+                position.setExplored(true);
+                visit.add(child);
+            }
+            if(maze.isValidCell(x - 1, y))
+            {
+                child = maze.getCell(x+1, y);
+                child.setParent(position);
+                position.setExplored(true);
+                visit.add(child);
+            }
+            if(maze.isValidCell(x, y - 1))
+            {
+                child = maze.getCell(x, y - 1);
+                child.setParent(position);
+                position.setExplored(true);
+                visit.add(child);
+            }
+
+        }
+        return getSolution();
     }
 
     public static void main(String[] args) {
